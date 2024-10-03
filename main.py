@@ -16,7 +16,11 @@ class ResumeScreener(object):
         return candidate_data
 
     def generate_candidate_profile(self, job_id, filename):
-        CandidateProfile().run(job_id, filename)
+        try:
+            CandidateProfile().run(job_id, filename)
+            return True
+        except Exception as err:
+            return False
 
     def get_job_details(self, job_id):
         return Metrics().get_job_details(job_id)
@@ -27,3 +31,6 @@ class ResumeScreener(object):
     def get_updated_status(self, status, resume_id, job_id):
         Metrics().update_status(status, resume_id, job_id)
 
+    def get_chat_response(self, prompt, file_path):
+        response = CandidateProfile().chat(prompt, file_path)
+        return response

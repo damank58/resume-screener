@@ -71,3 +71,7 @@ class CandidateProfile(object):
         data = (name, contact_no, email_id, address, work_exp, job_title, skills, has_masters, score, file_path, job_id, status)
         Metrics().insert_rec(data)
 
+    def chat(self, prompt, file_path):
+        self.qa_retriever = ResumeAI().run_for_chat(file_path)
+        response = self.get_llm_response(prompt)
+        return response
