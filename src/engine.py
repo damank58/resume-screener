@@ -10,8 +10,8 @@ load_dotenv()
 
 class ResumeAI(object):
     def __init__(self):
-        self.chunk_size = 400
-        self.chunk_overlap = 200
+        self.chunk_size = 40
+        self.chunk_overlap = 20
         self.openai_key = os.environ['OPENAI_API_KEY']
         self.embedding_model = "text-embedding-3-small"
         self.chat_model = "gpt-4o-mini"
@@ -26,7 +26,6 @@ class ResumeAI(object):
         else:
             return None
 
-
     def splitter(self, docs):
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=self.chunk_size, chunk_overlap=self.chunk_overlap)
         chunks = text_splitter.split_documents(docs)
@@ -37,7 +36,7 @@ class ResumeAI(object):
         return embeddings
 
     def get_pgvector_connection(self, embeddings):
-        pg_vectordb = PGVector(connection_string= self.CONNECTION_STRING,
+        pg_vectordb = PGVector(connection_string=self.CONNECTION_STRING,
                                collection_name=self.COLLECTION_NAME,
                                embedding_function=embeddings,
                                use_jsonb=True)
@@ -51,7 +50,7 @@ class ResumeAI(object):
         return docs_vectordb
 
     def retriever(self, db, file_path):
-        return db.as_retriever(search_kwargs={'filter': {'source': file_path}})
+        return db.as_retriever(search_kwargs={'k': 12, 'filter': {'source': file_path}})
 
     def llm(self):
         llm = ChatOpenAI(model=self.chat_model, openai_api_key=self.openai_key)
