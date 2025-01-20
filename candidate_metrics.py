@@ -14,7 +14,7 @@ class Metrics(object):
 
     def get_candidate_rec(self, job_id):
         response = ResumeDB().select_all(
-            """SELECT resume_id, name, summary_of_exp, previous_job_title, skills, has_masters, score, resume_path, status
+            """SELECT resume_id, name, summary_of_exp, previous_job_title, skills, has_masters, score, status, resume_path
                 FROM candidate_details
                 WHERE job_id = %s""", (job_id,)
         )
