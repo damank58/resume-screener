@@ -1,4 +1,4 @@
-from langchain.globals import set_debug
+#from langchain.globals import set_debug
 #set_debug(True)
 from src.engine import ResumeAI
 from candidate_metrics import Metrics
@@ -12,25 +12,26 @@ class CandidateProfile(object):
         return response['result']
 
     def get_name(self):
-        prompt = '''Given resume of a candidate, extract name of the candidate. Output name of the candidate only. No explanation.
-        Example: Steve Jobs, John Doel, Angelina Rob, Bobby Klein, Tina'''
+        prompt = '''Given resume of a candidate, extract name of the candidate usually mentioned at the top of the resume.
+        Output name of the candidate only. No explanation.
+        Example: Steve Jobs, Angelina Rob, Bobby Klein, Tina Sharma, Harpreet Singh'''
         response = self.get_llm_response(prompt=prompt)
         return response
 
     def get_contact_no(self):
-        prompt = '''Given resume of a candidate as context, give phone number of the candidate. 
+        prompt = '''Given resume of a candidate as context, extract phone number of the candidate. 
         Output phone number only and if unknown, give NA.'''
         response = self.get_llm_response(prompt)
         return response
 
     def get_email(self):
-        prompt = '''Given resume of a candidate as context, give email ID of the candidate. Output email ID only, and if
+        prompt = '''Given resume of a candidate as context, extract email ID of the candidate. Output email ID only, and if
         unknown, give NA. Example: abc12@gmail.com, xyz_12@hotmail.com'''
         response = self.get_llm_response(prompt)
         return response
 
     def get_address(self):
-        prompt = '''Given resume as a context, give address of the candidate. Output only address. No explanation.
+        prompt = '''Given resume as a context, extract address of the candidate. Output address only. No explanation.
         Output example: 33rd street, 14th Avenue, New York, United States-10001'''
         response = self.get_llm_response(prompt)
         return response
@@ -41,8 +42,8 @@ class CandidateProfile(object):
         return response
 
     def get_job_title(self):
-        prompt = ('''Give present or current job title of the candidate. No explanation in Output.
-        Example: Analyst, HR Consultant, Accountant''')
+        prompt = '''Tell present or current job title of the candidate. Extract only job title. No explanation needed.
+        Example: Analyst, HR Consultant, Accountant'''
         response = self.get_llm_response(prompt)
         return response
 
@@ -71,3 +72,7 @@ class CandidateProfile(object):
         data = (name, contact_no, email_id, address, work_exp, job_title, skills, has_masters, score, file_path, job_id, status)
         Metrics().insert_rec(data)
 
+    def chat(self, prompt, file_path):
+        self.qa_retriever = ResumeAI().run_for_chat(file_path)
+        response = self.get_llm_response(prompt)
+        return response
